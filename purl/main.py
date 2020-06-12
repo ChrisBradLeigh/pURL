@@ -2,6 +2,7 @@ from flask import Flask, request, redirect, url_for
 from flask_restful import Resource, Api
 from sqlalchemy import create_engine
 from markupsafe import escape
+import os
 import string
 import random
 import json
@@ -9,6 +10,10 @@ import json
 db_connect = create_engine('sqlite:///purl.db')
 app = Flask(__name__)
 api = Api(app)
+
+#Some Variable Declerations from ENV Vars
+default_url = os.environ.get('PURL_DEFAULT_URL')
+host_url = os.environ.get('PURL_HOST_URL')
 
 class pURL(Resource):
     def get(self, subpath):
@@ -27,7 +32,7 @@ class pURL(Resource):
             query = conn.execute("select * from urls WHERE url = \"" + subpath + "\";")
             result = {'data': [dict(zip(tuple (query.keys()) ,i)) for i in query.cursor]}
             if len(result['data']) > 0:
-                return("http://41.73.56.2:5002/" + result['data'][0]['id'])
+                return(host_url + result['data'][0]['id'])
             #generate random string:
             rString = ""
             for x in range(5):
@@ -35,7 +40,7 @@ class pURL(Resource):
             #add to DB
             conn = db_connect.connect() # Create connection to DB
             query = conn.execute("INSERT INTO urls(id, url) VALUES (\"" + rString + "\", \"" + subpath + "\");")
-            return("http://41.73.56.2:5002/" + rString)
+            return(host_url + rString)
         else:
             # Get URL of ShortURL from DB
             try:
@@ -45,7 +50,7 @@ class pURL(Resource):
                 print(result['data'][0]['url'])
                 return redirect(result['data'][0]['url'], code=302) # send client 302 based on url in DB
             except:
-                return redirect("https://chrisleigh.dev", code=302)
+                return redirect(default_url, code=302)
 
 api.add_resource(pURL, '/<path:subpath>')
 
