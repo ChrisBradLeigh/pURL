@@ -1,7 +1,9 @@
-from flask import Flask, request, redirect
+from flask import Flask, request, redirect, url_for
 from flask_restful import Resource, Api
 from sqlalchemy import create_engine
 from markupsafe import escape
+import string
+import random
 import json
 
 db_connect = create_engine('sqlite:///purl.db')
@@ -10,14 +12,36 @@ api = Api(app)
 
 class pURL(Resource):
     def get(self, subpath):
+        #reconstruct path to url with args
+        for i in request.args.keys():
+            if "?" in subpath:
+                subpath += "&"
+            else:
+                subpath += "?"
+            subpath += i + "=" + request.args.get(i)
+        print(subpath)
+        #Check the subpath, if match URL format, generate a url, else redirect
+        if subpath[:4] == "http":
+            #generate random string:
+            rString = ""
+            for x in range(5):
+                rString += random.choice(string.ascii_letters)
+            #add to DB
+            conn = db_connect.connect() # Create connection to DB
+            query = conn.execute("INSERT INTO urls(id, url) VALUES (\"" + rString + "\", \"" + subpath + "\");")
+            return("http://41.73.56.2:5002/" + rString)
+        else:
+            # Get URL of ShortURL from DB
+            try:
+                conn = db_connect.connect() # Create connection to DB
+                query = conn.execute("select url from urls WHERE id = \"" + subpath + "\";") #Return URL from DB
+                result = {'data': [dict(zip(tuple (query.keys()) ,i)) for i in query.cursor]} #get result in JSON format
+                print(result['data'][0]['url'])
+                return redirect(result['data'][0]['url'], code=302) # send client 302 based on url in DB
+            except:
+                return redirect("https://chrisleigh.dev", code=302)
 
-        # Get URL of ShortURL from DB
-        conn = db_connect.connect() # Create connection to DB
-        query = conn.execute("select url from urls WHERE id = \"" + subpath + "\";") #Return URL from DB
-        result = {'data': [dict(zip(tuple (query.keys()) ,i)) for i in query.cursor]}
-        return redirect(result['data'][0]['url'], code=302)
-
-api.add_resource(pURL, '/<subpath>')
+api.add_resource(pURL, '/<path:subpath>')
 
 if __name__ == '__main__':
      app.run(host='0.0.0.0', port='5002')
