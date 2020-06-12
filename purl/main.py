@@ -22,6 +22,12 @@ class pURL(Resource):
         print(subpath)
         #Check the subpath, if match URL format, generate a url, else redirect
         if subpath[:4] == "http":
+            #check if url already exists in DB
+            conn = db_connect.connect()
+            query = conn.execute("select * from urls WHERE url = \"" + subpath + "\";")
+            result = {'data': [dict(zip(tuple (query.keys()) ,i)) for i in query.cursor]}
+            if len(result['data']) > 0:
+                return("http://41.73.56.2:5002/" + result['data'][0]['id'])
             #generate random string:
             rString = ""
             for x in range(5):
