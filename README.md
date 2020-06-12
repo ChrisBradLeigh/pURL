@@ -5,4 +5,3 @@ Python Based URL Shortener
 
 ## How to Use
 Prefix your long url to generate a shortened version.<br>
-Works with any Domain
