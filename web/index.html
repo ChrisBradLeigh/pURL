@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+  <title>pURL</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/skeleton.css">
+
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="images/favicon.png">
+
+</head>
+
+<body>
+
+  <script>
+    function copy() {
+      const el = document.getElementById("copythishit").innerHTML;
+      fallbackCopyTextToClipboard(el)
+    }
+    function fallbackCopyTextToClipboard(text) {
+      var textArea = document.createElement("textarea");
+      textArea.value = text;
+
+      // Avoid scrolling to bottom
+      textArea.style.top = "0";
+      textArea.style.left = "0";
+      textArea.style.position = "fixed";
+
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+
+      try {
+        var successful = document.execCommand('copy');
+        var msg = successful ? 'successful' : 'unsuccessful';
+        console.log('Fallback: Copying text command was ' + msg);
+      } catch (err) {
+        console.error('Fallback: Oops, unable to copy', err);
+      }
+
+      document.body.removeChild(textArea);
+    }
+  </script>
+
+  <!-- Primary Page Layout
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <div class="container" style="text-align: center;">
+    <div class="row">
+      <div class="twelve columns" style="margin-top: 25%">
+        <h4 style="color: white;">pURL</h4>
+        <p style="color: white;">URL Condenser</p>
+      </div>
+    </div>
+    <!-- The above form looks like this -->
+    <form>
+      <div class="row">
+        <div class="twelve columns">
+          <!-- <input class="u-full-width" id="exampleEmailInput"> -->
+          <pre><code id="copythishit">https://chrisleigh.dev</code></pre>
+          <input class="button-primary" type="button" value="Copy to Clipboard" onclick="copy()"
+            style="background-color: darkcyan; border-color: darkcyan;">
+        </div>
+    </form>
+  </div>
+
+  <!-- Always wrap checkbox and radio inputs in a label and use a <span class="label-body"> inside of it -->
+
+  <!-- Note: The class .u-full-width is just a utility class shorthand for width: 100% -->
+
+  <!-- End Document
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+</body>
+
+</html>
