@@ -32,7 +32,7 @@ class pURL(Resource):
             query = conn.execute("select * from urls WHERE url = \"" + subpath + "\";")
             result = {'data': [dict(zip(tuple (query.keys()) ,i)) for i in query.cursor]}
             if len(result['data']) > 0:
-                return(host_url + result['data'][0]['id'])
+                return host_url + result['data'][0]['id']
             #generate random string:
             rString = ""
             for x in range(5):
@@ -40,7 +40,7 @@ class pURL(Resource):
             #add to DB
             conn = db_connect.connect() # Create connection to DB
             query = conn.execute("INSERT INTO urls(id, url) VALUES (\"" + rString + "\", \"" + subpath + "\");")
-            return(host_url + rString)
+            return host_url + rString
         else:
             # Get URL of ShortURL from DB
             try:
